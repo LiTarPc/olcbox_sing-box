@@ -4,6 +4,11 @@
 
 Репозиторий адаптирован для бесперебойной работы с новыми и будущими версиями **sing-box (1.11.0, 1.12.0, 1.13.0, 1.14.0+)**, в которых были ужесточены требования к конфигурации и удалены устаревшие поля.
 
+> [!IMPORTANT]  
+> **Данный форк адаптирован исключительно для ОС Windows (Desktop).**  
+> Компиляция под Android, iOS, macOS и Linux в данном репозитории **отключена** (соответствующие модули исключены из сборщика Gradle). Это позволяет собирать проект «из коробки» на любой Windows-машине без необходимости устанавливать тяжеловесные зависимости вроде Android SDK, NDK или Xcode.
+
+
 ---
 
 ## 🛠️ Совместимость с новыми версиями sing-box
@@ -73,23 +78,23 @@ The author does not support or encourage such use.
 
 ## Platform Matrix
 
-| Platform | Modes | Runtime |
+| Platform | Modes | Status / Runtime in this Fork |
 | --- | --- | --- |
-| Android | TUN, proxy | `VpnService`, `hev-socks5-tunnel`, local `olcrtc` SOCKS5 |
-| iOS | Proxy | local `olcrtc` SOCKS5 hosted by a Swift shell |
-| macOS | Proxy | local `olcrtc` SOCKS5 with OS PAC settings |
-| Windows | TUN | local `olcrtc` SOCKS5, `hev-socks5-tunnel`, Wintun |
-| Linux | TUN | local `olcrtc` SOCKS5, `hev-socks5-tunnel`, policy routes |
+| **Windows** | TUN, Proxy | **Active & Optimized** (via local `olcrtc` SOCKS5, `tun2socks`, `sing-box`) |
+| Android | - | *Disabled / Not compiled* |
+| iOS | - | *Disabled / Not compiled* |
+| macOS | - | *Disabled / Not compiled* |
+| Linux | - | *Disabled / Not compiled* |
+
 
 ## Requirements
 
 | Area | Requirement |
 | --- | --- |
 | JVM | JDK 17+ |
-| Android | Android Studio, Android SDK, Android NDK |
 | Desktop native assets | Go and local `olcrtc` fork |
-| Linux TUN | `iproute2`, `/dev/net/tun`, root/Polkit/sudo privileges |
 | Windows TUN | UAC elevation when TUN starts and bundled Wintun runtime |
+
 
 Default local `olcrtc` path:
 
