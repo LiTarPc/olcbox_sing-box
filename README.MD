@@ -1,6 +1,32 @@
-# Olcbox
+# Olcbox (Sing-box Compatibility Edition)
 
 `olcrtc` configurator built with Kotlin Multiplatform and Compose.
+
+Репозиторий адаптирован для бесперебойной работы с новыми и будущими версиями **sing-box (1.11.0, 1.12.0, 1.13.0, 1.14.0+)**, в которых были ужесточены требования к конфигурации и удалены устаревшие поля.
+
+---
+
+## 🛠️ Совместимость с новыми версиями sing-box
+
+В этой редакции устранены три критические ошибки запуска TUN-режима, приводившие к фатальным сбоям (`Desktop start failed: tun2socks exited before Olcbox was ready`):
+
+1. **Миграция Sniffing (Совместимость с 1.11.0 / 1.13.0+)**:
+   * Из конфигурации TUN-интерфейса (`inbounds`) удалены устаревшие поля `sniff` и `sniff_override_destination`, вызывавшие ошибку `legacy inbound fields are deprecated`.
+   * Анализ протоколов (сниффинг) перенесен на современный механизм правил маршрутизации в `route.rules` с использованием правила `{"action": "sniff"}`.
+
+2. **Обязательный резолвер доменов (Совместимость с 1.12.0 / 1.14.0+)**:
+   * В блок `"route"` добавлен параметр `"default_domain_resolver": "dns-direct"`.
+   * Это предотвращает сбой `missing 'route.default_domain_resolver' or 'domain_resolver' in dial fields`, возникающий из-за того, что `sing-box` требует явного резолвера для системных нужд (например, для автоматического скачивания и обновления файлов гео-правил `geoip-ru.srs` через `direct`).
+
+3. **Устранение избыточного обхода (Empty Detour Fix)**:
+   * Из конфигурации прямого DNS (`dns-direct`) удален параметр `"detour": "direct"`.
+   * В новых версиях `sing-box` системные запросы по умолчанию уходят напрямую. Попытка направить их на пустой outbound `direct` вызывает ошибку `detour to an empty direct outbound makes no sense`.
+
+4. **Стабильность WebRTC соединений**:
+   * Устранена проблема частых разрывов соединений со стороны клиентов (особенно на WB Stream и Jitsi). Ранее краш `sing-box` приводил к мгновенному экстренному закрытию процесса `olcrtc` на клиенте, из-за чего на сервере закрывались треки (`readVP8Track closed ... err=EOF`) и фиксировались пропущенные пинги (`missed pongs`).
+
+---
+
 
 <p align="center">
   <img src="docs/screenshots/photo_2026-05-05_15-40-57.jpg" alt="Olcbox home screen" width="200">
