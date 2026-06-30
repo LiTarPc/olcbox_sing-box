@@ -89,33 +89,42 @@ The author does not support or encourage such use.
 
 ## Requirements
 
-| Area | Requirement |
-| --- | --- |
-| JVM | JDK 17+ |
-| Desktop native assets | Go and local `olcrtc` fork |
-| Windows TUN | UAC elevation when TUN starts and bundled Wintun runtime |
+| Area | Requirement | Details / Paths |
+| --- | --- | --- |
+| **JVM** | JDK 17+ | Required to compile and run the Kotlin Multiplatform application. |
+| **Go Toolchain** | Go 1.22+ | Required for local compilation of `olcrtc` binary. |
+| **olcrtc Repository** | Sibling directory `../olcrtc` | Used to build `olcrtc-windows-amd64.exe` during Gradle build. |
+| **Windows TUN** | UAC elevation | Administrative privileges are required at startup to create the TUN interface. |
 
+### 📦 Встроенные зависимости (Native Assets)
 
-Default local `olcrtc` path:
+Для корректной сборки и работы приложения на Windows в папке `desktopApp/src/main/resources/native/` должны находиться следующие зависимости:
 
+1. **`sing-box.exe`**: Основной исполняемый файл VPN-ядра (версии 1.9.3+ с поддержкой `gvisor`/`quic`).
+2. **`wintun.dll`**: Драйвер для создания виртуального сетевого TUN-интерфейса в Windows.
+3. **`libcronet.dll`**: Библиотека сетевого стека Chromium, необходимая клиенту `olcrtc` для обхода TLS-отпечатков (fingerprinting) при подключении к Jitsi.
+
+*(Все эти файлы уже предварительно добавлены и отслеживаются в Git в текущей ветке.)*
+
+### 🛠️ Настройка локальной сборки с olcRTC
+
+По умолчанию Gradle ожидает исходники `olcrtc` в соседней папке по пути:
 ```text
 ../olcrtc
 ```
 
-Override it with `OLCRTC_REPO`:
+Если ваша папка с исходниками `olcrtc` имеет другое имя (например, `olcrtc-master`), вы должны переопределить путь к репозиторию с помощью переменной окружения `OLCRTC_REPO` перед сборкой.
 
+#### Примеры запуска:
+
+**В Bash (Linux/macOS):**
 ```bash
-OLCRTC_REPO=/path/to/olcrtc ./gradlew :desktopApp:run
+OLCRTC_REPO=../olcrtc-master ./gradlew :desktopApp:run
 ```
 
-Relative `OLCRTC_REPO` values are resolved from the `olcbox` project root:
-
-```bash
-OLCRTC_REPO=../olcrtc-ansible-deploy/olcrtc ./gradlew :androidApp:assembleRelease
-```
-
+**В PowerShell (Windows):**
 ```powershell
-$env:OLCRTC_REPO="C:\path\to\olcrtc"
+$env:OLCRTC_REPO="C:\Users\LiTar\Desktop\olc\olcrtc-master"
 .\gradlew.bat :desktopApp:run
 ```
 
